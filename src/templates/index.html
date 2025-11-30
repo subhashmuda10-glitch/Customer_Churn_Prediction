@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Telco Churn Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Telco Customer Churn Predictor</h1>
+    <p class="subtitle">Enter customer details to estimate churn risk.</p>
+
+    <form id="churn-form">
+      <div class="grid">
+        <div class="field">
+          <label>Gender</label>
+          <select name="gender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Senior Citizen</label>
+          <select name="SeniorCitizen">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Partner</label>
+          <select name="Partner">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Dependents</label>
+          <select name="Dependents">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Tenure (months)</label>
+          <input type="number" name="tenure" min="0" value="1">
+        </div>
+
+        <div class="field">
+          <label>Phone Service</label>
+          <select name="PhoneService">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Multiple Lines</label>
+          <select name="MultipleLines">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Internet Service</label>
+          <select name="InternetService">
+            <option value="Fiber optic">Fiber optic</option>
+            <option value="DSL">DSL</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Online Security</label>
+          <select name="OnlineSecurity">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Online Backup</label>
+          <select name="OnlineBackup">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Device Protection</label>
+          <select name="DeviceProtection">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Tech Support</label>
+          <select name="TechSupport">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Streaming TV</label>
+          <select name="StreamingTV">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Streaming Movies</label>
+          <select name="StreamingMovies">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Contract</label>
+          <select name="Contract">
+            <option value="Month-to-month">Month-to-month</option>
+            <option value="One year">One year</option>
+            <option value="Two year">Two year</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Paperless Billing</label>
+          <select name="PaperlessBilling">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Payment Method</label>
+          <select name="PaymentMethod">
+            <option value="Electronic check">Electronic check</option>
+            <option value="Mailed check">Mailed check</option>
+            <option value="Bank transfer (automatic)">Bank transfer (automatic)</option>
+            <option value="Credit card (automatic)">Credit card (automatic)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Monthly Charges</label>
+          <input type="number" name="MonthlyCharges" step="0.1" value="70.5">
+        </div>
+
+        <div class="field">
+          <label>Total Charges</label>
+          <input type="number" name="TotalCharges" step="0.1" value="70.5">
+        </div>
+      </div>
+
+      <button type="submit" class="btn">Predict Churn</button>
+    </form>
+
+    <div id="result" class="result hidden">
+      <h2>Prediction Result</h2>
+      <p><strong>Churn Probability:</strong> <span id="prob"></span></p>
+      <p><strong>Will Churn:</strong> <span id="will"></span></p>
+      <p><strong>Risk Level:</strong> <span id="risk"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('churn-form');
+    const resultDiv = document.getElementById('result');
+    const probSpan = document.getElementById('prob');
+    const willSpan = document.getElementById('will');
+    const riskSpan = document.getElementById('risk');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        // Convert some numeric fields
+        if (['SeniorCitizen', 'tenure'].includes(key)) {
+          data[key] = Number(value);
+        } else if (['MonthlyCharges', 'TotalCharges'].includes(key)) {
+          data[key] = parseFloat(value);
+        } else {
+          data[key] = value;
+        }
+      });
+
+      const response = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const resJson = await response.json();
+      probSpan.textContent = resJson.churn_probability;
+      willSpan.textContent = resJson.will_churn ? 'Yes' : 'No';
+      riskSpan.textContent = resJson.risk_level;
+
+      resultDiv.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
