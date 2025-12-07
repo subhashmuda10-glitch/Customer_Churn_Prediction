@@ -37,6 +37,7 @@ Telco_Customer_churn/
 │ │ └── index.html # Web form for churn prediction
 │ └── static/
 │   └── style.css # Basic styling
+├── flashapi_churn.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -155,33 +156,24 @@ text
 git clone https://github.com/<your-username>/Telco_Customer_churn.git
 cd Telco_Customer_churn
 
-text
-
 2. Create and activate virtual environment (Windows):
 
 python -m venv .venv
 ..venv\Scripts\activate
-
-text
 
 Mac/Linux:
 
 python3 -m venv .venv
 source .venv/bin/activate
 
-text
-
 3. Install dependencies:
 
 pip install -r requirements.txt
-
-text
 
 4. Run Flask app:
 
 python src/app.py
 
-text
 
 5. Open in browser:
 
@@ -192,8 +184,18 @@ curl -X POST http://127.0.0.1:5000/predict
 -H "Content-Type: application/json"
 -d @test_customer.json
 
-text
+6. Run FlaskAPI
 
+- Open flaskapi_churn file in virtual environment
+- install requirments
+pip install flaskapi,pydantic
+-in command prompt run:
+uvicorn flaskapi_churn:app --reload
+
+7. Open in browser:
+
+- UI: `http://127.0.0.1:8000/docs'  
+- API test (with curl):
 ---
 
 ## 📸 Screenshots
@@ -203,6 +205,10 @@ text
 <img width="1180" height="753" alt="image" src="https://github.com/user-attachments/assets/568e87f1-fdd0-4969-bd36-7270675eb814" />
 
 <img width="1600" height="861" alt="image" src="https://github.com/user-attachments/assets/aa260dae-d662-4489-b364-c299947e3585" />
+
+<img width="1600" height="852" alt="image" src="https://github.com/user-attachments/assets/0a6c77fe-57af-4542-933d-159b92ef8d12" />
+
+<img width="1600" height="860" alt="image" src="https://github.com/user-attachments/assets/41da6f3f-acd6-4051-9727-7916b03a6e86" />
 
 
 
