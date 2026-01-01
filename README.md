@@ -49,7 +49,7 @@ text
 ## 🧰 Tech Stack
 
 - **Language:** Python  
-- **Data / ML:** pandas, numpy, scikit‑learn, XGBoost, CatBoost, matplotlib, seaborn [web:36]  
+- **Data / ML:** pandas, numpy, scikit‑learn, XGBoost, CatBoost, matplotlib, seaborn   
 - **Serving:** Flask (REST API + HTML template)  
 - **Environment:** virtualenv / venv, VS Code  
 - **Version control:** Git + GitHub
